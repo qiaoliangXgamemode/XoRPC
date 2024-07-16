@@ -1,20 +1,21 @@
 # XoRPC Qiangliang
 
 ## 青联RPC
-XoRPC是青联应用之一，基于基础的网络编程实现，协助网络传输。可用于Minecraft联机、点对点通信。
+**qingliangRPC** 又名 *XoRPC* 是青联应用通信框架，基于Golang语言开发协助Qingliang Connect(青联互联)使用。
 
-青联RPC 分为 RPC 和 RPC PLUS 版本
+青联RPC可以为青联互联提供点对点通信、loT物联网开发，但并不仅限于。
 
-青联RPC PLUS 是在青联做上组网，目前未实现，实现后也是自己使用。
+青联RPC也作为青联互联ARM硬件，在组网上是以青联RPC基础增入组网模式，青联互联ARM硬件的组网开发并不是Go版本，该项目目前尚未实现。青联ARM硬件开发后将会邀请公测，其实相当于软路由上进行组网。不过青联ARM应该是依靠自己的设计主板，CPU方面应该使用天玑or高通作为处理包也使用NPU作为加速合拆解包。
 
-据我所知一些游戏好友，青联RPC 更适用于广大Minecraft玩家所用。
+与众不同的是青联RPC可以为青联互联 Minecraft特供，也就是在青联RPC基础上再开发一系列插件达到目的，使用青联达到联机目的。
+
+**乡湘婷**旗下的LanMay岚芒将实验使用青联互联 Minecraft特供版，实现本地Minecraft服务器连接。
 
 （本身此青联RPC和RPC PLUS的用途是自身团队所用）
 ### 目录
 
 * [开发状态](#开发状态)
 * [设计图](#设计图)
-    * [思路](#思路)
 * [计划表](#计划表)
     * [保持计划](#保持计划)
     * [其他](#其他)
@@ -22,11 +23,7 @@ XoRPC是青联应用之一，基于基础的网络编程实现，协助网络传
 * [赞助](#赞助)
 
 ## 开发状态
-个人：由于本人是封闭式管理高中，此项目是初三写剩下的，可能不定期维护；加上本人是美术生，更多时间放在学习与练习之中。
-
-项目：对于本项目，我有候选人，预计明年此项目是三人共同编写。后期我会退出一段时间，之后再回来。
-
-维护性： 我早已做成模块化形式，满足效率与维护性高。
+个人： 由于高中学业繁忙，尽可能完善修复bug。
 
 ## 设计图
 ![Design](design.png)
@@ -34,104 +31,112 @@ XoRPC是青联应用之一，基于基础的网络编程实现，协助网络传
 
 ## Node (服务节点注册)代码示例
 ```
-   var Config cfg.ServerConfig
-	// 节点ID
-	Config.ServiceID = 1
-	// 节点名称
-	Config.ServiceName = "服务器节点1"
-	// 节点权重
-	Config.Serviceweight = 1
-	// 节点通信加密
-	Config.ServiceEncrypt = true
-	// 节点过滤器
-	Config.ServiceFilter = true
-	// 节点过滤器类型
-	// Minecraft 节点只专注于minecraft的数据
-	Config.ServiceFiltertype = "minecraft"
-	// 节点公开的验证密钥
-	Config.PublicToken = "1bb8snhasd(Habv)"
-	// 节点私密的验证密钥
-	Config.PrivateToken = "G9sdb&Ubvsad0GH*Jwds2rt4t59ndc0cn+112s.Nsm234"
-	// 节点Hash唯一
-	Config.ServiceGroupHash = "1dsf"
-	// 广域网(可选)
-	Config.Node_widearea_spDimain = {
-		0:"193.22.45.111"
-	}
-	// 公域网(可选)
-	Config.Node_public_spDimain = {}
-	// 绑定地址
-	// Config.NodeIPV6 = "fe80::973e:1e65:a21e:c3f3"
-	Config.NodeIPV4 = "0.0.0.0"
-	// 通信协议
-	Config.Protocol = "UDP"
-	// 绑定端口 (UDP)
-	Config.SerNodePort = 2333
-	// Config.conn
-	// 是否启用节点流量转发
-	Config.TranspondForwar = 1
-	// 流量转发端口绑定 （TCP） | 可以分开UDP和TCP
-	Config.TranspondForwarPort = 10086
-	XoServerNode := XoRPC.NewServerXORPC(Config)
-	XoRPC.LogsConfigServer(XoServerNode)
-	XoServerNode.Server(4)
+  	cfgs := new(XoRPC.NodeConfig)
+	cfgs.ServiceID = 1001
+	cfgs.ServiceName = "Minecraft Connent Node"
+	cfgs.Serviceweight = 5
+	cfgs.ServiceEncrypt = true
+	cfgs.PublicToken = "wss"
+	cfgs.PrivateToken = "1145145"
+	cfgs.Protocol = "QUIC"
+	cfgs.NodeIPV4 = "::"
+	cfgs.SerNodePort = 11451
+	cfgs.ServiceFilter = true
+	cfgs.ServiceFiltertype = "Minecraft"
+	cfgs.Run()
 ```
 ### Config type
 ```
-type ServerConfig struct {
-	ServiceID       int // 服务ID
-	ServiceName      string
-	Serviceweight      int
-	ServiceEncrypt bool // encryption 通信加密
-	
-	ServiceFilter bool // Filter on / off
-	ServiceFiltertype string // Filter type...
+type NodeConfig struct {
+	// Node ID, This is a virtual id
+	// If there is LP plugin management, this is completely managed by LP
+	// LP plugin is CN service special version
+	ServiceID int
+	// the Node Name, This is a virtual name
+	ServiceName string
+	// Node weight , This is a virtual
+	Serviceweight int
+	// 通信加密 由AES256和TLS，一般来说QUIC协议默认启用加密
+
+	// encryption enable
+	// encryption AES256 and TLS
+	ServiceEncrypt bool
+
+	// 过滤器，可为HTTP、HTTPS、Minecraft(IntVar)达到过滤
+	// 写入XoRPC是为LP插件使用
+
+	// Filter enable
+	ServiceFilter bool
+	// Filter type... select HTTP、HTTPS、Minecraft(IntVar)?
+	ServiceFiltertype string
 
 	// 公开密钥 与 私密密钥
 	// 公开密钥作用是在公域网上被其他节点验证，并且进行通信
 	// 私密密钥作用是在广域网上被其他节点验证，并且进行通信与监控
 	// 私密密钥具有监控、日志追踪、从新选举主节点作用
-	PublicToken string // Public token vry
-	PrivateToken string // Private token vry spDimain
-	
-	ServiceGroupHash string // Node setting self Hash
-	// 公域网、广域网
-	// spDimain公域网作用是公开节点地址，用于节点与节点之间在公域上连接。 一般来说RPC会主动拉取主节点或者相邻节点的信息
+
+	// Public token vry spDimain network
+	PublicToken string
+	// Private token vry WideArea network
+	PrivateToken string
+
+	// Hash分布式，不过不依赖青联LP插件服务的话，完全就是没用的东西。
+
+	// Node setting self Hash
+	ServiceGroupHash string
+
+	// 公域网 Public area network
+	// 广域网 wide area network
+	// spDimain 公域网作用是公开节点地址，用于节点与节点之间在公域上连接。 一般来说RPC会主动拉取主节点或者相邻节点的信息
 	// WideArea广域网用于节点与节点私密进行监控、信息交换、类似与局域网。
-	// WideArea
+
+	// The auto is controlled by DTH and can be partially managed manually
+	// WideArea networks are used for node to node privacy for monitoring, information exchange, and similar to local area networks.
+	// WideArea network
 	Node_widearea_Control map[string]int
-	// spDimain
-	Node_public_spDimain map[string]int
+	// The auto is controlled by DTH and can be partially managed manually
+	// The spDimain(public domain network) is used to expose node addresses and connect nodes on the public domain. Generally speaking, the RPC will actively pull information about the primary node or adjacent nodes
+	// spDimain network
+	Node_public_spDimain interface{}
 
 	// protocol and IP Addres
-	Protocol    string
+	Protocol string
+	// Your ipv4 local addres
 	NodeIPV4 string
+	// Your ipv6 local addres
 	NodeIPV6 string
+	// Node listen port, If the DTH routing table is used, ports after NAT are displayed
 	SerNodePort int
 
-	// --- Server Extension ---
-	TranspondForwar     bool
+	// - Node Extension -
+	// Node traffic forwarding
+	TranspondForwar bool
+	// Node forward port
 	TranspondForwarPort int
+	// Node Flow Doamin
 	FlowDomain map[string]int
 
 	// Qinglian PLUS version
 	// your local rules should be supported.
 	// not you computer rules, it's you local. you konw?
 	DomainTUNandAPT bool
+
+	NodeNetworkV4 interface{}
+	NodeNetworkV6 interface{}
 }
 ```
 ### 思路
 NAT
 
 ## 计划表
-- [ ] 支持IPV6
-- [ ] 支持QUIC协议
+- [x] 支持IPV6
+- [x] 支持QUIC协议
 - [ ] 支持免费服务器服务
 - [ ] 实现自己一套多路复用方案
 - [ ] 支持VarInt过滤器，用于 Minecraft
 - [ ] 支持节点之间中转数据
 - [ ] 额外开发用于想贡献服务器宽带作为给用户带来更好体验的版本（审核机制严格，国外服务器一律不需要）
-- [ ] 支持UPNP
+- [x] 支持UPNP
 - [ ] 支持ICMP隧道
 - [ ] 更好的网络延迟计算公式
 - [ ] （空想）通过DNS加密获取双方NAT
@@ -142,11 +147,10 @@ NAT
 3. 合作更多人，立志于提供更好服务。
 
 ### 其他
-1. 用于 青联 - 院块简 （给学校弄的玩意）多人编辑表格和文档之中
+1. 用于 青联互联 - 文件互传
 
 ### 基本
 - [x] AES加密
-- [x] KCP协议应用
 ## 赞助
 爱发电地址：https://afdian.net/a/Buserpi
 
