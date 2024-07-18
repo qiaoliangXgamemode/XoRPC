@@ -1,6 +1,7 @@
 package XoRPC
 
 func (cfg *NodeConfig) UpdateCfg(cfgs *NodeConfig) {
+	cfg = cfgs
 }
 
 func (cfg *NodeConfig) Run() {

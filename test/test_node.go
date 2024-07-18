@@ -3,7 +3,7 @@ package main
 import "XoRPC"
 
 func main() {
-	cfgs := new(XoRPC.NodeConfig)
+	var cfgs XoRPC.NodeConfig
 	cfgs.ServiceID = 1001
 	cfgs.ServiceName = "Minecraft Connent Node"
 	cfgs.Serviceweight = 5

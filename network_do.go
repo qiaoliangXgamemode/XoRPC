@@ -10,7 +10,10 @@ func network_do(cfg *NodeConfig) {
 		cfg.NodeNetworkV4, _ = CreateQuicListen(cfg.NodeIPV4, cfg.SerNodePort)
 	}
 	if v6 := IsIPv4(cfg.NodeIPV6); v6 == true {
-		cfg.NodeNetworkV6, _ = CreateQuicListen(cfg.NodeIPV6, cfg.SerNodePort)
+		if cfg.Protocol == "QUIC" {
+			l := ListenerQUIC(cfg.NodeIPV6, cfg.SerNodePort)
+			go cfg.quic_accept(l)
+		}
 	}
 }
 
