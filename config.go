@@ -44,7 +44,7 @@ type NodeConfig struct {
 	// Hash分布式，不过不依赖青联LP插件服务的话，完全就是没用的东西。
 
 	// Node setting self Hash
-	ServiceGroupHash string
+	ServiceGroupHash int
 
 	// 公域网 Public area network
 	// 广域网 wide area network
@@ -54,11 +54,11 @@ type NodeConfig struct {
 	// The auto is controlled by DTH and can be partially managed manually
 	// WideArea networks are used for node to node privacy for monitoring, information exchange, and similar to local area networks.
 	// WideArea network
-	Node_widearea_Control map[string]int
+	Node_widearea_Control widearea
 	// The auto is controlled by DTH and can be partially managed manually
 	// The spDimain(public domain network) is used to expose node addresses and connect nodes on the public domain. Generally speaking, the RPC will actively pull information about the primary node or adjacent nodes
 	// spDimain network
-	Node_public_spDimain interface{}
+	Node_public_spDimain *Spdomain
 
 	// protocol and IP Addres
 	Protocol string

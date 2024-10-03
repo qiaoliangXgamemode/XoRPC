@@ -1,6 +1,6 @@
 package XoRPC
 
-type loologin struct {
+type reylogin struct {
 	ServiceID         int
 	ServiceName       string
 	Serviceweight     int
@@ -16,10 +16,10 @@ type loologin struct {
 type recvlogin struct {
 }
 
-func wrtieLoologin(*loologin) {
+func wrtieLoologin(*reylogin) {
 
 }
 
-func rpcPareslogin(reftext *loologin) {
-	return reftext
-}
+// func rpcPareslogin(reftext *loologin) {
+// 	return reftext
+// }

@@ -12,6 +12,7 @@
 **乡湘婷**旗下的LanMay岚芒将实验使用青联互联 Minecraft特供版，实现本地Minecraft服务器连接。
 
 （本身此青联RPC和RPC PLUS的用途是自身团队所用）
+
 ### 目录
 
 * [开发状态](#开发状态)
@@ -148,7 +149,12 @@ NAT
 
 ### 其他
 1. 用于 青联互联 - 文件互传
-
+ LP（Landslide Pudding/Patch 雪崩补丁）
+ - LP 是青联互联用户管理的控制API
+ 
+ CTMP (Connect Transport Mode Pudding/Patch)
+ - CTMP 是作为Minecraft开发的服务器（Domain 域，青联抽象的一种类似内网作为构建一张抽象网络，比如私域作为私人节点、公域暴露整个网络节点）私域节点之间互通插件提供转发服务。
+ - CTMP 又是为随心计划开发，随心计划又是贡献自己的服务器节点作为中转提供服务。
 ### 基本
 - [x] AES加密
 ## 赞助
